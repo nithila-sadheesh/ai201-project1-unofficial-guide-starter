@@ -139,18 +139,18 @@ flowchart LR
 
 **Milestone 3 — Ingestion and chunking:**
 - Tool: Claude
-- Input: The Documents section (source URLs), the Chunking Strategy section, and requirements.txt
+- Input: The Documents section (source URLs), the Chunking Strategy section, and the pipeline diagram
 - Expected output: An `ingest.py` that fetches each URL using `requests`/`BeautifulSoup` and saves the raw text, and a `chunk.py` with a `chunk_text()` function that applies 450-token fixed-size chunking with 75-token overlap for articles and one-comment-per-chunk for Reddit, with the thread title prepended to each Reddit chunk
 - Verification: Run on one article source and one Reddit source, print the chunks, and manually confirm article chunks are ~450 tokens with overlap and Reddit chunks are one comment each with the thread title attached
 
 **Milestone 4 — Embedding and retrieval:**
 - Tool: Claude
-- Input: The Retrieval Approach section, the architecture diagram, and requirements.txt
+- Input: The Retrieval Approach section, the architecture diagram, and the pipeline diagram
 - Expected output: An `embed.py` that loads chunks, embeds them using `all-MiniLM-L6-v2` via `sentence-transformers`, and stores them in ChromaDB; and a `retrieve.py` with a `retrieve(query, k=3)` function that returns the top-3 most similar chunks using cosine similarity
 - Verification: Run the 5 evaluation questions through `retrieve()` and manually check that the returned chunks are topically relevant to each question
 
 **Milestone 5 — Generation and interface:**
 - Tool: Claude
-- Input: The Retrieval Approach section, the Evaluation Plan section, and requirements.txt
+- Input: The Retrieval Approach section, the Evaluation Plan section, and the pipeline diagram
 - Expected output: A `generate.py` that passes retrieved chunks as context to the Groq API and returns a grounded answer, plus a Gradio interface with a text input and response display
 - Verification: Run all 5 evaluation questions through the full pipeline end-to-end and compare responses against the expected answers in the Evaluation Plan

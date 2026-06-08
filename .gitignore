@@ -16,5 +16,8 @@ env/
 chroma_db/
 chroma/
 
+# Generated pipeline output — rebuilt by chunk.py
+chunks.json
+
 # macOS
 .DS_Store
