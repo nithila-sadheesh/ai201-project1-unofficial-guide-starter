@@ -49,6 +49,7 @@ def clean_text(text):
 
 def fetch_article(source):
     print(f"  Fetching article: {source['name']} ...")
+
     try:
         resp = requests.get(source["url"], headers=HEADERS, timeout=15)
         resp.raise_for_status()
@@ -58,23 +59,41 @@ def fetch_article(source):
 
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    # Strip clutter before extracting text
-    for tag in soup(["script", "style", "nav", "header", "footer",
-                     "aside", "form", "button", "noscript", "iframe"]):
+    # Strip obvious clutter
+    for tag in soup([
+        "script", "style", "nav", "header", "footer",
+        "aside", "form", "button", "noscript", "iframe"
+    ]):
         tag.decompose()
 
-    # Try to find the main content container in order of specificity
+    # Find main content
     content = (
         soup.find("article")
         or soup.find("main")
-        or soup.find(class_=re.compile(r"article[_-]?body|post[_-]?body|entry[_-]?content|story[_-]?body", re.I))
+        or soup.find(
+            class_=re.compile(
+                r"article[_-]?body|post[_-]?body|entry[_-]?content|story[_-]?body",
+                re.I,
+            )
+        )
         or soup.find(id=re.compile(r"article|content|main|story", re.I))
         or soup.body
     )
 
     if content is None:
-        print(f"  WARNING: could not isolate content for {source['name']}, using full page")
+        print(
+            f"  WARNING: could not isolate content for {source['name']}, using full page"
+        )
         content = soup
+
+    # Remove Daily Cal / TownNews social-share widgets
+    for tag in content.select(
+        ".share-container, "
+        ".social-share-links, "
+        ".social-share-link, "
+        "#share-left-affix"
+    ):
+        tag.decompose()
 
     text = content.get_text(separator="\n")
     text = clean_text(text)
